@@ -11,6 +11,14 @@ app.get("/", function(req, res){
 app.get('/', function(req,res){
   res.render(page);
 })
+app.use(express.static(__dirname + "/public"));
 
-app.listen(8081);
+var io = require('socket.io').listen(app.listen(8081));
+
+io.sockets.on('connection', function(socket){
+  socket.emit('message', {message : 'Welcome to the chat'});
+  socket.on('send', function(data){
+    socket.emit('message', data);
+  });
+});
 console.log("Listening on port 8081");
